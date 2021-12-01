@@ -6,3 +6,73 @@ output: html_document
 ---
 
 Day 1 is [here](https://adventofcode.com/2021/day/1)
+
+## Part 1
+
+### Loading data 
+
+
+```{r}
+library(httr)
+depht <- GET("https://adventofcode.com/2021/day/1/input")
+depht
+```
+
+Apparently it is using an id/login so I will just copy/paste in txt.
+
+```{r}
+depth <- read.csv("data/day1", header = FALSE)
+```
+
+### Exercise 
+
+This look like a simple loop and I went with it. 
+
+```{r}
+## initiate count
+
+
+count_depth <- function(x) {
+    count <- 0
+    for (i in 1:(length(x) - 1))
+        {
+        
+        ifelse(x[i] < x[i+1], 
+               count <- count + 1, 
+               count <- count + 0)
+    }
+    return(count)
+    }
+
+count_depth(depth$V1)
+```
+
+
+### Part 2
+
+Text is [here](https://adventofcode.com/2021/day/1#part2).
+
+The first step is calculating new measures then we will be able to reuse part 1 here. 
+
+#### First step 
+
+I created an empty vector first then fill it. I don't think it matter too much. 
+
+```{r}
+nb_measurement <- 2
+new_measurement <- vector(mode = "integer",
+                          length = length(depth$V1) - nb_measurement)
+
+for (i in 1:(length(depth$V1) - nb_measurement)) 
+    {
+        new_measurement[i] <- sum(depth$V1[i:(i+nb_measurement)])
+    }
+
+```
+
+### Second step
+
+```{r}
+count_depth(new_measurement)
+```
+
