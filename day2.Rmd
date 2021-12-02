@@ -40,3 +40,33 @@ depth
 horiz_pos * depth
 ```
 
+## Part 2
+
+[Here](https://adventofcode.com/2021/day/2#part2)
+
+I will try to keep track of aim and depth. Horizontal position doesn't change.
+
+```{r}
+
+aim <- 0
+depth <- 0
+
+for (i in 1:length(direction$arrow))
+    {
+    ifelse(direction$arrow[i] == "forward",
+           {aim <- aim + 0;
+           depth <- depth + (aim * direction$unit[i])},
+           ifelse(direction$arrow[i] == "up",
+                  aim <- aim - direction$unit[i],
+                  aim <- aim + direction$unit[i]
+           )) 
+    #print(aim)
+    #print(depth)
+    }
+
+```
+
+```{r}
+depth * horiz_pos
+```
+
