@@ -1,0 +1,42 @@
+---
+title: "day2"
+author: "olivier"
+date: "12/2/2021"
+output: html_document
+---
+
+# Day 2 at #adventofcode
+
+## Part1
+
+The riddle to solve is [here](https://adventofcode.com/2021/day/2). 
+
+
+### Loading data 
+
+```{r}
+direction <- read.csv("data/day2", header = F, sep = " ")
+names(direction) <- c("arrow", "unit")
+```
+
+### Moving the sub
+
+I will try first to implement moving forward then I will add the two other options.
+
+```{r}
+horiz_pos <- sum(direction$unit[direction$arrow == "forward"])
+
+horiz_pos
+```
+
+
+```{r}
+depth <- sum(direction$unit[direction$arrow == "down"]) - sum(direction$unit[direction$arrow == "up"])
+
+depth
+```
+
+```{r}
+horiz_pos * depth
+```
+
