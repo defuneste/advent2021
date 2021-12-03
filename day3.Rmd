@@ -1,0 +1,111 @@
+---
+title: "day3"
+author: "olivier"
+date: "12/3/2021"
+output: html_document
+---
+
+## Part 1
+
+[Link](https://adventofcode.com/2021/day/3)
+
+### lodaing the data 
+
+```{r}
+bin_number <- readLines("data/day3")
+bin_number_mat <- t(sapply(strsplit(bin_number, "", TRUE),
+       as.numeric))
+```
+
+I had trouble reading data so I had to process a bit!
+
+```{r}
+apply(bin_number_mat, 2, sum)
+gamma_vect <- ifelse( apply(bin_number_mat, 2, sum) > length(bin_number)/2,
+        1,
+        0
+      )
+
+epsilon_vect <- ifelse( apply(bin_number_mat, 2, sum) > length(bin_number)/2,
+        0,
+        1
+      )
+
+gamma <- strtoi(paste0(gamma_vect, collapse = ""), base = 2)
+
+epsilon <- strtoi(paste0(epsilon_vect, collapse = ""), base = 2)
+
+
+gamma * epsilon
+```
+
+## Part 2
+
+[Link](https://adventofcode.com/2021/day/3#part2)
+
+We should do some recursive stuff. Oxygen rating keep the most and Co2 keep the least. 
+
+```{r}
+
+last_one <- length(bin_number)
+oxy_bin <- bin_number_mat
+pos <- 1
+
+majority <-function(x) {
+    # in this case when = it can be 1
+    ifelse(sum(oxy_bin[,x]) >= length(oxy_bin[,1])/2,
+           1,
+           0
+         )
+}
+
+while(last_one > 2)
+    {
+        maj <- majority(pos)
+        oxy_bin  <- oxy_bin[oxy_bin[,pos] == maj , ]
+        pos <- pos + 1
+        last_one <- length(oxy_bin[,1])
+        print(last_one)
+}
+
+oxy_bin <- oxy_bin[oxy_bin[,pos] == 1,]
+
+oxy <- strtoi(paste0(oxy_bin, collapse = ""), base = 2)
+oxy
+
+```
+
+
+```{r}
+
+last_one <- length(bin_number)
+c02_bin <- bin_number_mat
+pos <- 1
+
+minority <-function(x) {
+    ifelse(sum(c02_bin[,x]) >= length(c02_bin[,1])/2,
+           0,
+           1
+         )
+}
+
+while(last_one >  1 )
+    {
+        min <- minority(pos)
+        c02_bin   <- c02_bin[c02_bin[,pos] == min , ]
+        if(length(dim(c02_bin)) != 2) break
+        pos <- pos + 1
+        last_one <- length(c02_bin [,1])
+        print(last_one)
+}
+
+#c02_bin <- c02_bin[c02_bin[,pos] == 0,]
+
+c02 <- strtoi(paste0(c02_bin , collapse = ""), base = 2)
+c02
+```
+
+```{r}
+oxy*c02
+```
+
