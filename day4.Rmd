@@ -1,0 +1,104 @@
+---
+title: "day4"
+author: "olivier"
+date: "12/4/2021"
+output: html_document
+---
+
+## Load the data 
+
+I divided it into two parts:  
+- the random order of the number
+- the bingo matrices
+
+```{r}
+random_number <- scan(file = "data/day4", what = "list", nlines = 1, sep = ",") |> 
+                    as.numeric()
+
+bingo_raw <- scan(file = "data/day4", what = "list", skip = 1) |> 
+                    as.numeric()
+
+bingo_list <- list()
+
+for (i in 1:100){
+    start <- (25 * i) - 24
+    end <- 25 * i
+    bingo_list[[i]] <- matrix(bingo_raw[start:end], ncol = 5, byrow = TRUE)
+}
+    
+```
+
+I think I will replace each matrix number with the time it match a random_number
+
+```{r}
+matrix_order <- list()
+
+for (i in 1:100){
+matrix_order[[i]] <- matrix(match(bingo_list[[i]], random_number),
+                            ncol = 5, byrow = FALSE)
+}
+# test
+#bingo_list[[100]]
+#matrix_order[[100]]
+```
+
+To complete the lines (row or col) the most important one is the last number to be completed. The lines who get this number at the lowest point win. 
+
+```{r}
+row_list <- list()
+for (i in 1:100) {
+row_list[[i]] <- apply(matrix_order[[i]], 1, max)
+}
+
+#row_list[[100]]
+
+which.min(unlist(lapply(row_list, min)))
+
+col_list <- list()
+
+for (i in 1:100) {
+col_list[[i]] <- apply(matrix_order[[i]], 2, max)
+}
+
+which.min(unlist(lapply(col_list, min)))
+```
+
+In my case row win! And the bingo 43 !!!
+
+```{r}
+
+sum((matrix_order[[43]] > 30) * bingo_list[[43]]) * 38
+
+```
+
+## Part 2
+
+We want the last bingo that complete one line. So the max of the min.
+
+```{r}
+row_list <- list()
+for (i in 1:100) {
+row_list[[i]] <- apply(matrix_order[[i]], 1, max)
+}
+
+#row_list[[100]]
+
+which.max(unlist(lapply(row_list, min)))
+
+col_list <- list()
+
+for (i in 1:100) {
+col_list[[i]] <- apply(matrix_order[[i]], 2, max)
+}
+
+which.max(unlist(lapply(col_list, min)))
+```
+
+
+```{r}
+
+sum((matrix_order[[84]] > 86) * bingo_list[[84]]) * 32
+
+apply(matrix_order[[84]], 1, max)
+
+```
