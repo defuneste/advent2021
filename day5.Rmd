@@ -1,0 +1,59 @@
+---
+title: "day5"
+author: "olivier"
+date: "12/5/2021"
+output: html_document
+---
+
+## load data
+
+```{r}
+directions <- scan("data/day5", sep = "\n", what =  "character")
+
+library(tidyverse)
+
+directions <- as.data.frame(directions) |> 
+                        tidyr::separate(directions, 
+                                        into = c("x1", "y1", "x2", "y2"),
+                                        convert = TRUE)
+
+```
+
+## Part 1
+
+We need to keep only the horizontal and vertical lines. Find a way to "extend" them. Then sum them to see where more than 1 lines overlap. 
+
+Find a way to "extend" them. -> this was not my solution but David Robinson's one,I need to look into purrr ....
+
+```{r}
+axis_directions <- directions[directions$x1 == directions$x2 | directions$y1 == directions$y2 ,]
+
+axis_directions_etendu <- axis_directions %>% 
+    dplyr::mutate(long = purrr::map2(x1, x2, seq)) %>% 
+    dplyr::mutate(lat = purrr::map2(y1, y2, seq)) %>% 
+    tidyr::unnest(long) %>% 
+    tidyr::unnest(lat
+
+axis_directions_etendu %>% 
+    dplyr::count(long , lat) %>% 
+    dplyr::summarize(sum(n > 1))
+```
+
+## Part 2
+
+> the lines in your list will only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees.
+
+We have already horizontal and vertical. So we need to "extend" x1 -> x2 and y1 -> y2 then remove horiz and vertical lines to add it to the previous result.
+
+```{r}
+diagonal <- directions %>% 
+                    dplyr::mutate(long = purrr::map2(x1, x2, seq)) %>% 
+                    dplyr::mutate(lat = purrr::map2(y1, y2, seq)) %>% 
+                    dplyr::filter(!(x1 == x2 | y1 == y2)) %>% 
+                    tidyr::unnest(c(long, lat)) 
+
+rbind(axis_directions_etendu, diagonal) %>% 
+    dplyr::count(long, lat) %>% 
+    dplyr::summarize(sum(n > 1))
+```
+
