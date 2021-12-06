@@ -1,0 +1,85 @@
+---
+title: "day6"
+author: "olivier"
+date: "12/6/2021"
+output: html_document
+---
+
+## Loading the data 
+
+```{r}
+lanternfish <- scan("data/day6", sep = ",")
+```
+
+```{r}
+table(lanternfish)
+```
+
+## Part 1
+
+Population ecology! We can "matrix" multiply  each new population of fish from day 0 to day 80 against [Leslie Matrix](https://vlab.amrita.edu/?sub=3&brch=65&sim=183&cnt=1).
+
+```{r}
+p0 <- c(0, 0, 0, 0, 0, 0, 1, 0, 1)
+
+p1_8 <- matrix(0, nrow = 8, ncol = 9)
+
+for (i in 1:8) {
+    p1_8[i,i] <- 1
+}
+
+leslie_mat <- rbind(p0, p1_8)
+
+
+pop_fish <- c(0, 212, 23, 25, 21, 19, 0, 0, 0)
+```
+
+test on one day 
+
+```{r}
+pop_1 <-   pop_fish %*% leslie_mat
+pop_1 
+
+pop_2 <-   pop_1 %*% leslie_mat
+pop_2
+
+pop_3 <- pop_2 %*% leslie_mat
+pop_3
+    
+```
+
+```{r}
+gen <- 80
+pop_proj <- matrix(0, nrow = 9, ncol = gen + 1)
+pop_proj[, 1] <- pop_fish
+
+i = 1
+for (i in 1:gen){
+        pop_proj[, i + 1] <- pop_proj[, i] %*% leslie_mat
+  
+}
+pop_proj[,gen + 1]
+sum(pop_proj[,gen + 1])
+
+
+```
+
+## part 2
+
+
+```{r}
+gen <- 256
+pop_proj <- matrix(0, nrow = 9, ncol = gen + 1)
+pop_proj[, 1] <- pop_fish
+
+i = 1
+for (i in 1:gen){
+        pop_proj[, i + 1] <- pop_proj[, i] %*% leslie_mat
+  
+}
+pop_proj[,gen + 1]
+sum(pop_proj[,gen + 1])
+
+options(scipen = 999)
+
+```
