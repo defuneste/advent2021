@@ -1,0 +1,82 @@
+---
+title: "day7"
+author: "olivier"
+date: "12/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## loading data 
+
+```{r}
+crab <- scan("data/day7", sep = ",")
+head(crab)
+```
+
+## Part 1
+
+Sounds like RMSE but simpler: 
+
+```{r}
+mean(crab)
+posistion_mediane <- median(crab)
+
+sum(abs(posistion_mediane - crab))
+```
+
+## part 2
+
+I need to start with a smaller example. The answer can be between 0 and 16. Let start with median or mean then move. 
+
+The good position is 5.
+
+```{r}
+small_crab <- c(16,1,2,0,4,2,7,1,2,14)
+
+abs(median(small_crab) - small_crab)
+
+# 1 -> 1
+# 2 -> 1,2
+# 3 -> 1,2,3
+# let's do a function that do that 
+
+fuel <- data.frame(positions = 1:max(small_crab),
+                   consuption = NA) 
+
+for (i in 1:max(small_crab)) {
+    
+    count_crab <- function(x) {
+        sum(1:(abs(i - x)))}
+    
+    fuel$consuption[i] <- sum(sapply(small_crab, count_crab))
+
+}
+
+fuel[which.min(fuel$consuption),]
+
+```
+
+
+```{r}
+fuel <- data.frame(positions = 1:max(crab),
+                   consuption = NA) 
+
+for (i in 1:max(crab)) {
+    
+    count_crab <- function(x) {
+        sum(1:(abs(i - x)))}
+    
+    fuel$consuption[i] <- sum(sapply(crab, count_crab))
+
+}
+
+fuel[which.min(fuel$consuption),]
+
+
+```
+
+
+
