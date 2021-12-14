@@ -1,0 +1,79 @@
+---
+title: "day9"
+author: "olivier"
+date: "12/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading data
+
+```{r}
+library(terra)
+
+DEM <- readLines("data/day9") |> 
+    strsplit(split = "", fixed = TRUE)  |>
+    do.call(what = rbind)
+   
+DEM <- apply(DEM, 1,as.integer)
+
+DEM <- rast(DEM)
+```
+
+
+
+
+## Part 1
+```{r}
+
+exmple <- readLines("data/exmple9") |> 
+    strsplit(split = "", fixed = TRUE)  |>
+    do.call(what = rbind)
+   
+exmple <- apply(exmple, 1,as.integer) |> terra::rast()
+```
+
+```{r}
+DEM
+data <- DEM
+
+focal_windows <- matrix(c(NA,1,NA,
+                          1,NA,1,
+                          NA,1,NA),
+                        nrow = 3)
+
+filtre <- terra::focal(data, focal_windows, min, na.rm = FALSE, fillvalue = 99)
+
+new <- data - filtre  
+
+sum(as.matrix(data, wide = TRUE)[as.matrix(new, wide=TRUE) < 0] + 1)
+
+```
+
+## Part 2
+
+I went with the same pacth than (https://twitter.com/long39ng)
+
+```{r}
+DEM <- readLines("data/day9") |> 
+    strsplit(split = "", fixed = TRUE)  |>
+    do.call(what = rbind)
+   
+DEM <- apply(DEM, 1,as.integer)
+
+DEM_hightline <- ifelse(DEM == 9, 0, 1)
+
+DEM_hightline |> 
+    terra::rast() |>
+    terra::patches(zeroAsNA = T) |>
+    terra::as.data.frame() |> 
+    dplyr::count(lyr.1) |>
+    dplyr::slice_max(n, n = 3)
+
+114 * 96 *93
+
+```
+
